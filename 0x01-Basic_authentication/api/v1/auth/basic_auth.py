@@ -2,6 +2,8 @@
 """Authentication class"""
 from flask import request
 from .auth import Auth
+from typing import TypeVar
+from models.user import User
 import base64
 
 
@@ -41,6 +43,34 @@ class BasicAuth(Auth):
             return None, None
         user_email, user_password = base64_string.split(':', 1)
         return user_email, user_password
+
+    def user_object_from_credentials(self, user_email: str, user_pwd:
+                                     str) -> TypeVar('User'):
+        """Return user instance bsed on his email and password"""
+        if user_email is None or not isinstance(user_email, str):
+            return None
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+        user_list = User.search({'email': user_email})
+        if user_list is None:
+            return None
+        for user in user_list:
+            if user.is_valid_password(user_pwd):
+                return user
+        return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """Retrive user instance for a request"""
+        if request is None:
+            return None
+        auth_header = self.authorization_header(request)
+        b64_auth_header = self.extract_base64_authorization_header(auth_header)
+        decode_string = self.decode_base64_authorization_header(b64_auth_header)
+        user_email, user_pwd = self.extract_user_credentials(decode_string)
+        user_instance = self.user_object_from_credentials(user_credential)
+
+        return user_instance
+
 
         """
         if not base64_authorization_header.startswith('Basic '):
