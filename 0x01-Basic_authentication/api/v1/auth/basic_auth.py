@@ -64,17 +64,9 @@ class BasicAuth(Auth):
         if request is None:
             return None
         auth_header = self.authorization_header(request)
-        b64_auth_header = self.extract_base64_authorization_header(auth_header)
-        decode_string = self.decode_base64_authorization_header(b64_auth_header)
+        b64_header = self.extract_base64_authorization_header(auth_header)
+        decode_string = self.decode_base64_authorization_header(b64_header)
         user_email, user_pwd = self.extract_user_credentials(decode_string)
         user_instance = self.user_object_from_credentials(user_credential)
 
         return user_instance
-
-
-        """
-        if not base64_authorization_header.startswith('Basic '):
-            return None
-        else:
-            return base64_authorization_header.split(' ')[1]
-            """
