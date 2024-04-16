@@ -16,7 +16,7 @@ class Auth:
             if path.rstrip('/') == p.rstrip('/'):
                 return False
         else:
-            return True 
+            return True
 
     def authorization_header(self, request=None) -> str:
         """Return Authorization if contained in request.header"""
