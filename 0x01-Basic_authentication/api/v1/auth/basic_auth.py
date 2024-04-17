@@ -2,7 +2,7 @@
 """Authentication class"""
 from flask import request
 from .auth import Auth
-from typing import TypeVar
+from typing import List, TypeVar
 from models.user import User
 import base64
 
@@ -67,6 +67,6 @@ class BasicAuth(Auth):
         b64_header = self.extract_base64_authorization_header(auth_header)
         decode_string = self.decode_base64_authorization_header(b64_header)
         user_email, user_pwd = self.extract_user_credentials(decode_string)
-        user_instance = self.user_object_from_credentials(user_credential)
+        user_instance = self.user_object_from_credentials(user_email, user_pwd)
 
         return user_instance
