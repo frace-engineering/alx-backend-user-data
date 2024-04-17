@@ -12,6 +12,9 @@ class Auth:
             return True
         if excluded_paths is None or len(excluded_paths) == 0:
             return True
+        for excluded_path in excluded_paths:
+            if excluded_path.endswith('*') and path.startswith(excluded_path[:-1]):
+                return False
         for p in excluded_paths:
             if path.rstrip('/') == p.rstrip('/'):
                 return False
