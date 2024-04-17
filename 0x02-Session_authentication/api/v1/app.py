@@ -17,6 +17,9 @@ CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 auth = None
 auth = getenv('AUTH_TYPE')
 if auth:
+    if auth == 'session_auth':
+        from api.v1.auth.session_auth import SessionAuth
+        auth = SessionAuth()
     if auth == 'basic_auth':
         from api.v1.auth.basic_auth import BasicAuth
         auth = BasicAuth()
