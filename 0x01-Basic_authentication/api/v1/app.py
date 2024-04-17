@@ -23,8 +23,6 @@ if auth:
     elif:
         from api.v1.auth.auth import Auth
         auth = Auth()
-    else:
-        return
 
 
 @app.before_request
