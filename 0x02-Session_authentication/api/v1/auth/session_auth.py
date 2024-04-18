@@ -15,6 +15,6 @@ class SessionAuth(Auth):
         else:
             self.session_id = str(uuid.uuid4())
             if self.session_id not in self.user_id_by_session_id:
-                self.user_id_by_session_id[user_id] = {} 
-            self.user_id_by_session_id[user_id] = self.session_id 
+                self.user_id_by_session_id[user_id] = {}
+            self.user_id_by_session_id[user_id] = self.session_id
             return self.session_id
