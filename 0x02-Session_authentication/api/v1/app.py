@@ -33,11 +33,16 @@ def before_request_handler():
     """Handle the before request"""
     if auth is None:
         return
-    paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/']
+    paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/',
+             '/api/v1/auth_session/login/']
     if not auth.require_auth(request.path, paths):
         return
 
     if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.authorization_header(request) is None:
+        abort(401)
+    if auth.session_cookie(request) is None:
         abort(401)
 
     request.current_user = auth.current_user(request)
