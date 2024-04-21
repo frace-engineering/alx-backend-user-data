@@ -36,7 +36,6 @@ def before_request_handler():
     """Handle the before request"""
     if auth is None:
         return
-    print(auth.authorization_header(request))
     paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/',
              '/api/v1/auth_session/login/']
     if not auth.require_auth(request.path, paths):
