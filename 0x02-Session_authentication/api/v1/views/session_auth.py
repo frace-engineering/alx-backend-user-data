@@ -19,7 +19,7 @@ def login():
         password = request.form.get('password')
         if not password or password == '':
             return jsonify({"error": "password is missing"}), 400
-        user_list = User.search({'email':email})
+        user_list = User.search({'email': email})
         if not user_list:
             return jsonify({"error": "no user found for this email"}), 404
         for user in user_list:
@@ -34,10 +34,11 @@ def login():
                 return jsonify({"error": "wrong password"}), 4004
         return jsonify({"error": "no user found for this email"}), 404
 
-    from api.v1.app import auth
-    @app_views.route('/api/v1/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+    @app_views.route('/api/v1/auth_session/logout', methods=['DELETE'],
+                     strict_slashes=False)
     def logout():
         """DELETE /api/v1/auth_session/logout"""
+        from api.v1.app import auth
         if self.auth.destroy_session(request):
             return jsonify({}), 200
         else:
