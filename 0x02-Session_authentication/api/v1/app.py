@@ -19,15 +19,12 @@ auth = getenv('AUTH_TYPE')
 if auth:
     if auth == 'session_auth':
         from api.v1.auth.session_auth import SessionAuth
-        print("Session")
         auth = SessionAuth()
     elif auth == 'basic_auth':
         from api.v1.auth.basic_auth import BasicAuth
-        print("Basic")
         auth = BasicAuth()
     else:
         from api.v1.auth.auth import Auth
-        print("Auth")
         auth = Auth()
 
 
@@ -36,17 +33,16 @@ def before_request_handler():
     """Handle the before request"""
     if auth is None:
         return
+    request.current_user = auth.current_user(request)
     paths = ['/api/v1/status/', '/api/v1/unauthorized/', '/api/v1/forbidden/',
              '/api/v1/auth_session/login/']
-    if not auth.require_auth(request.path, paths):
+    if auth.require_auth(request.path, paths):
         return
     if auth.authorization_header(request) is None\
-            and auth.session_cookie(request) is None:
+            and not auth.session_cookie(request):
         abort(401)
-    else:
-        if auth.current_user(request) is None:
-            abort(403)
-    request.current_user = auth.current_user(request)
+    if auth.current_user(request) is None:
+        abort(403)
 
 
 @app.errorhandler(404)
