@@ -16,21 +16,29 @@ def login():
         email = request.form.get('email')
         if not email or email == '':
             return jsonify({"error": "email missing"}), 400
-        print(f'email is {email}')
         password = request.form.get('password')
         if not password or password == '':
             return jsonify({"error": "password is missing"}), 400
-        print(f'password is {password}')
-        user = User.search({"email": email})
-        print(f'User is {user}')
-        if not user:
+        user_list = User.search({'email':email})
+        if not user_list:
             return jsonify({"error": "no user found for this email"}), 404
-        if not user.is_valid_password(user.id):
-            return jsonify({"error": "wrong password"}), 4004
-        from api.v1.app import auth
-        session_id = auth.create_session(user.id)
-        response_data = user.to_json()
-        response = make_response(jsonify(response_data), 200)
-        response.set_cookie(os.getenv('SESSION_NAME'), session_id)
-        return response
-    return
+        for user in user_list:
+            if user.is_valid_password(password):
+                from api.v1.app import auth
+                session_id = auth.create_session(user.id)
+                response_data = user.to_json()
+                response = make_response(jsonify(response_data), 200)
+                response.set_cookie(os.getenv('SESSION_NAME'), session_id)
+                return response
+            else:
+                return jsonify({"error": "wrong password"}), 4004
+        return jsonify({"error": "no user found for this email"}), 404
+
+    from api.v1.app import auth
+    @app_views.route('/api/v1/auth_session/logout', methods=['DELETE'], strict_slashes=False)
+    def logout():
+        """DELETE /api/v1/auth_session/logout"""
+        if self.auth.destroy_session(request):
+            return jsonify({}), 200
+        else:
+            abort(404)
