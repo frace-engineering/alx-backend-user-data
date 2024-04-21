@@ -68,5 +68,4 @@ class BasicAuth(Auth):
         decode_string = self.decode_base64_authorization_header(b64_header)
         user_email, user_pwd = self.extract_user_credentials(decode_string)
         user_instance = self.user_object_from_credentials(user_email, user_pwd)
-
         return user_instance
