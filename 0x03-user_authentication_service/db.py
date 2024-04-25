@@ -74,6 +74,8 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs: dict) -> None:
         """Update user attribute"""
+        if not user_id or not isinstance(user_id, int):
+            return None
         this_user = self.find_user_by(id=user_id)
         for attr, value in kwargs.items():
             if attr not in VALID_FIELDS:
