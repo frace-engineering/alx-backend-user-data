@@ -26,7 +26,7 @@ def _hash_password(password: str) -> bytes:
     return hashed_password
 
 
-def _generate_uuid(self):
+def _generate_uuid():
     """uuid method"""
     return str(uuid.uuid4())
 
@@ -56,7 +56,7 @@ class Auth:
             else:
                 return False
         except NoResultFound:
-            return False 
+            return False
 
     def create_session(self, email: str) -> str:
         """Auth.session_id"""
