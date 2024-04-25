@@ -28,7 +28,10 @@ def _hash_password(password: str) -> bytes:
 
 def _generate_uuid():
     """uuid method"""
-    return str(uuid.uuid4())
+    try:
+        return str(uuid.uuid4())
+    except Exception:
+        return None
 
 
 class Auth:
