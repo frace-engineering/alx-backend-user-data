@@ -64,7 +64,7 @@ class DB:
         Return:
             First row found.
         """
-        if not kwargs or any(x not in VALID_FIELDS for x in kwargs):    
+        if not kwargs or any(x not in VALID_FIELDS for x in kwargs):
             raise InvalidRequestError('Invalid')
         session = self._session
         try:
