@@ -6,8 +6,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import InvalidRequestError
 
 from user import Base, User
+VALID_FIELDS = ['id', 'email', 'hashed_password',
+                'session_id', 'reset_token']
 
 
 class DB:
@@ -42,6 +46,8 @@ class DB:
         Return:
             User instance.
         """
+        if not email or not hashed_password:
+            return
         new_user = User(email=email, hashed_password=hashed_password)
         session = self._session
         session.add(new_user)
@@ -58,16 +64,13 @@ class DB:
         Return:
             First row found.
         """
-        from sqlalchemy.orm.exc import NoResultFound
-        from sqlalchemy.exc import InvalidRequestError
+        if not kwargs or any(x not in VALID_FIELDS for x in kwargs):    
+            raise InvalidRequestError('Invalid')
+        session = self._session
         try:
-            session = self._session
-            result = session.query(User).filter_by(**kwargs).first()
-            if result is None:
-                raise NoResultFound("Not found")
-            return result
-        except InvalidRequestError as e:
-            raise InvalidRequestError("Invalid") from e
+            return session.query(User).filter_by(**kwargs).one()
+        except Exception:
+            raise NoResultFound('Not found')
 
     def update_user(self, user_id: int, **kwargs: dict) -> None:
         """Update user attribute"""
