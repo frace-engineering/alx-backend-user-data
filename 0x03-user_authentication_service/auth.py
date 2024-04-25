@@ -16,6 +16,8 @@ def _hash_password(password: str) -> bytes:
     We encode password because bcrypt's hashpw accepts without error
     bytes string but raises error with unicode string
     """
+    if not password or not isinstance(password, str):
+        return
     password_bytes = password.encode('utf-8')
     """Use bcrypt builtin gensalt() to generate randome salt"""
     salt = bcrypt.gensalt()
@@ -31,11 +33,10 @@ class Auth:
 
     def register_user(self, email: str, password: str) -> User:
         """Register a user"""
-        try:
-            user = self._db.find_user_by(email=email)
+        if not email or not isinstance(email, str):
+            return
+        if self._db.find_user_by(email=email):
             raise ValueError(f'User {email} already exist')
-        except NoResultFound:
-            pass
         hashed_password = self._hash_passpword(password)
         self._db.add_user(email=email, hashed_password=hashed_password)
         return user

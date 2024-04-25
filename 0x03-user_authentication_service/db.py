@@ -76,6 +76,7 @@ class DB:
         """Update user attribute"""
         this_user = self.find_user_by(id=user_id)
         for attr, value in kwargs.items():
-            if hasattr(this_user, attr):
-                setattr(this_user, attr, value)
+            if attr not in VALID_FIELDS:
+                raise ValueError
+            setattr(this_user, attr, value)
         self._session.commit()
