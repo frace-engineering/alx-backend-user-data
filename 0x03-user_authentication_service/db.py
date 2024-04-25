@@ -72,7 +72,7 @@ class DB:
         except Exception:
             raise NoResultFound('Not found')
 
-    def update_user(self, user_id: int, **kwargs: dict) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """Update user attribute"""
         if not user_id or not isinstance(user_id, int):
             return None
