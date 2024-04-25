@@ -26,11 +26,6 @@ def _hash_password(password: str) -> bytes:
     return hashed_password
 
 
-def _generate_uuid():
-    """uuid method"""
-    return str(uuid.uuid4())
-
-
 class Auth:
     """Auth class to interact with the authentication database.
     """
@@ -49,16 +44,25 @@ class Auth:
         """Validate login"""
         try:
             user = self._db.find_user_by(email=email)
+            input_password = _hash_password(password)
+            hashed_password = _hash_password(user.hashed_password)
+            if not bcrypt.checkpw(input_password, hashed_password):
+                return True
+            else:
+                return False
         except NoResultFound:
-            return False
-        input_password = password.encode("utf-8")
-        return bcrypt.checkpw(input_password, user.hashed_password)
+            return False 
+
+
+    def _generate_uuid(self):
+        """uuid method"""
+        return str(uuid.uuid4())
 
     def create_session(self, email: str) -> str:
         """Auth.session_id"""
         try:
             user = self._db.find_user_by(email=email)
-            ssn_id = _generate_uuid()
+            ssn_id = self._generate_uuid()
             self._db.update_user(user.id, session_id=ssn_id)
             return ssn_id
         except NoResultFound:
